@@ -1,0 +1,35 @@
+#Consumo CPU per pod nel namespace nell'intervallo di un minuto: grafici distinti selezionabili per ogni pod. 
+#Il comando esclude i "Pause Container", atti alla predisposizione e gestione della Inter-Process Communication, qualora ve ne siano. 
+sum(rate(container_cpu_usage_seconds_total{namespace="NOME-NAMESPACE", container!="POD"}[1m])) by (pod)
+
+#Somma consumi di CPU di tutti i pod all'interno dei namespace nell'intervallo di tempo di cinque minuti: grafici distinti selezionabili per ogni pod. 
+#Comprende i "Pause Container".
+sum(rate(container_cpu_usage_seconds_total{namespace="NOME-NAMESPACE"}[5m]))
+
+#Consumo medio dell'utilizzo della memoria per container
+SBAGLIATO: sum(rate(container_memory_max_usage_bytes{namespace="NOME-NAMESPACE", container!="POD"}[1m])) by (pod) / 1024 / 1024
+#La funzione rate si applica a metriche di tipo contatore, cioè mentriche che si possono solo incrementare o resettare.
+#Queste metriche di solito terminano con suffissi come _total, _sum, _count, o _bucket.
+CORRETTO: avg_over_time(container_memory_usage_bytes{namespace="NOME-NAMESPACE", container!="POD"}[5m]) / 1024 / 1024
+
+#consumo mem globale tutti i pod nel namespace:
+SBAGLIATO: sum(rate(container_memory_usage_bytes{namespace="NOME-NAMESPACE"}[5m])) / 1024 / 1024         
+#La funzione rate si applica a metriche di tipo contatore, cioè mentriche che si possono solo incrementare o resettare.
+#Queste metriche di solito terminano con suffissi come _total, _sum, _count, o _bucket.
+CORRETTO: avg_over_time(container_memory_usage_bytes{namespace="NOME-NAMESPACE"}[5m]) / 1024 / 1024
+
+#consumo cpu per servizio nel namespace:
+sum(rate(container_cpu_usage_seconds_total{namespace="NOME-NAMESPACE", container!="POD"}[5m])) by (service)
+//Questa query non funziona se i pod non hanno un label specifico che indica il service specifico associato ad ogni pod. 
+
+#Consumo medio della CPU per ogni pod nel namespace
+sum(rate(container_cpu_usage_seconds_total{namespace="NOME-NAMESPACE"}[5m])) by (pod)
+
+
+
+
+
+by (pod) aggrega le metriche di tutti i container in un pod e rappresenta dei grafici con delle curve che mostrano la metrica per ogni singolo pod. 
+
+{container!="POD"} specifica che deve ignorare tutti i pause container che si prendono cura della IPC (inter-Process Communication) all'interno del pod.
+
