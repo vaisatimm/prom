@@ -1,0 +1,2 @@
+Requests in Kubernetes
+Requests: Questa impostazione definisce la quantità di risorse (CPU e memoria) che Kubernetes garantisce al pod. Non è un limite superiore, ma piuttosto il minimo garantito che Kubernetes si assicura sia sempre disponibile per il pod. Quando Kubernetes schedula i pod sui nodi, utilizza il valore requests per trovare un nodo che abbia abbastanza risorse disponibili per soddisfare la request.
