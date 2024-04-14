@@ -1,2 +1,32 @@
 Requests in Kubernetes
-Requests: Questa impostazione definisce la quantità di risorse (CPU e memoria) che Kubernetes garantisce al pod. Non è un limite superiore, ma piuttosto il minimo garantito che Kubernetes si assicura sia sempre disponibile per il pod. Quando Kubernetes schedula i pod sui nodi, utilizza il valore requests per trovare un nodo che abbia abbastanza risorse disponibili per soddisfare la request.
+
+Requests: Questa impostazione definisce la quantità di risorse (CPU e memoria) che Kubernetes garantisce al pod. 
+Non è un limite superiore, ma piuttosto il minimo garantito che Kubernetes si assicura sia sempre disponibile per il pod. 
+Quando Kubernetes schedula i pod sui nodi, utilizza il valore requests per trovare un nodo che abbia abbastanza risorse disponibili per soddisfare la request.
+
+-Xms < Limits 
+-Xmx < Limits 
+
+Specifiche Deployment BNL (BW_JAVA_OPTS):
+
+      containers:
+      - env:
+        - name: BW_JAVA_OPTS
+          value: -Xmx4096m -Xms512m
+        image: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+        imagePullPolicy: Always
+        name: tibcopilotbe
+        ports:
+        - containerPort: 8080
+          name: plain-port
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "4"
+            ephemeral-storage: 1G
+            memory: 1Gi
+          requests:
+            cpu: 400m
+            ephemeral-storage: 1G
+            memory: 256Mi
+
